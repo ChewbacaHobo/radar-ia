@@ -1,0 +1,13 @@
+{
+  "name": "claude-factory-starter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modèle de projet pour travailler avec Claude Code : specs, tests, CI comme juge, garde-fous git.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

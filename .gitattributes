@@ -1,0 +1,2 @@
+# Fins de ligne LF partout : évite les faux changements entre Windows et la CI Linux.
+* text=auto eol=lf
