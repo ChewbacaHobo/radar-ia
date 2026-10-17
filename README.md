@@ -1,40 +1,33 @@
-# claude-factory-starter
+# radar-ia
 
-[![CI](https://github.com/ChewbacaHobo/claude-factory-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/ChewbacaHobo/claude-factory-starter/actions/workflows/ci.yml)
+[![CI](https://github.com/ChewbacaHobo/radar-ia/actions/workflows/ci.yml/badge.svg)](https://github.com/ChewbacaHobo/radar-ia/actions/workflows/ci.yml)
 
-Modèle de projet pour travailler avec **Claude Code** comme une petite *software factory* :
-tu écris ce que tu veux, Claude code et teste, et **la CI juge** avant que quoi que ce soit n'arrive sur `main`.
+Suit des dépôts GitHub d'outils IA (étoiles, activité) et produit un rapport Markdown daté.
+Sert à garder à jour la veille sur les outils pour Claude Code.
 
-## Ce qu'il y a dedans
+Ce projet est construit par une **petite usine Claude Code** (niveau 3 → 4) :
 
-| Élément | Rôle |
-|---|---|
-| `CLAUDE.md` | Les règles que Claude suit dans ce projet |
-| `.claude/HANDOFF.md` | L'état du travail, pour reprendre d'une session à l'autre |
-| `.claude/hooks/guard-git.mjs` | Garde-fou : Claude ne peut pas committer ou pousser sur `main`, ni forcer un push |
-| `specs/` | Les descriptions de ce qu'on construit (modèle dans `000-modele.md`) |
-| `src/` + `test/` | Le code et ses tests (un petit exemple à remplacer) |
-| `.github/workflows/ci.yml` | Le juge : lance `npm test` sur chaque pull request |
-
-## Protections sur GitHub
-- Personne ne pousse directement sur `main`, même le propriétaire.
-- Une pull request ne se fusionne que si le job `test` est vert.
-- Les branches fusionnées sont supprimées automatiquement.
-
-## Démarrer un nouveau projet à partir de ce modèle
-
-```bash
-gh repo create mon-projet --template ChewbacaHobo/claude-factory-starter --public --clone
+```
+toi : spec + tests d'acceptation  →  agent codeur  →  agent vérificateur  →  CI  →  toi : fusion
 ```
 
-Puis ouvre le dossier dans Claude Code, remplis `.claude/HANDOFF.md`, et écris ta première spec dans `specs/`.
+| Pièce | Fichier | Rôle |
+|---|---|---|
+| Spec | `specs/NNN-*.md` | Ce qu'on veut, en clair |
+| Juge | `test/acceptance/NNN-*.test.js` | Les tests qui disent si la spec est respectée |
+| Codeur | `.claude/agents/codeur.md` | Écrit le code et les tests unitaires, ouvre la PR |
+| Vérificateur | `.claude/agents/verificateur.md` | Relit en lecture seule, verdict OK / À CORRIGER |
+| Garde-fous | `.claude/hooks/*.mjs` | Bloquent ce qui est interdit (voir `CLAUDE.md`) |
+| CI | `.github/workflows/ci.yml` | Lance `npm test` sur chaque PR |
 
-> Sur un compte GitHub gratuit, la protection de branche ne marche que sur les dépôts **publics**.
-> Pour un dépôt privé protégé, il faut GitHub Pro.
-> Les protections ne sont pas copiées par `--template`. Dans le nouveau projet, après le premier push, lance `node scripts/protect-main.mjs`.
+## Utiliser l'usine
 
-## Commandes utiles
-- `npm test` : lancer les tests (Node 22 ou plus, aucune dépendance)
-- `gh pr create --fill` : ouvrir une pull request
-- `gh pr checks` : voir si la CI est verte
-- `gh pr merge --squash --delete-branch` : fusionner une PR verte
+Ouvre ce dossier dans Claude Code (accepte la confiance du dossier : sans elle, les hooks des agents ne tournent pas), puis :
+
+1. Écris ou fais écrire une spec et ses tests d'acceptation sur une branche `feat/NNN-...`.
+2. `@codeur implémente specs/NNN-....md`
+3. `@verificateur vérifie la PR n° X (spec NNN)`
+4. Lis le verdict, puis fusionne la PR toi-même sur GitHub.
+
+## Développer
+- `npm test` : tous les tests (Node 22+, aucune dépendance)

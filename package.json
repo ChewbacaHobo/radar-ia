@@ -1,8 +1,8 @@
 {
-  "name": "claude-factory-starter",
+  "name": "radar-ia",
   "version": "0.1.0",
   "private": true,
-  "description": "Modèle de projet pour travailler avec Claude Code : specs, tests, CI comme juge, garde-fous git.",
+  "description": "Suit des dépôts GitHub d'outils IA et produit un rapport Markdown daté.",
   "type": "module",
   "scripts": {
     "test": "node --test"
