@@ -66,6 +66,31 @@ test('genererRapport : retours à la ligne Windows et barres multiples', () => {
   assert.ok(ligneDe({ nom: 'a/b', description: 'a\r\nb|c|d' }).endsWith('| a b\\|c\\|d |'));
 });
 
+test('genererRapport : description de blancs seuls (tabulations, \\r) → tiret cadratin', () => {
+  assert.ok(ligneDe({ nom: 'a/b', description: '\t\t' }).endsWith('| — |'));
+  assert.ok(ligneDe({ nom: 'a/b', description: '\r\r\n' }).endsWith('| — |'));
+});
+
+test('genererRapport : blancs internes conservés, bords retirés', () => {
+  assert.ok(ligneDe({ nom: 'a/b', description: '\n a  b \n' }).endsWith('| a  b |'));
+});
+
+test('genererRapport : le trim passe avant la coupe', () => {
+  // 100 « y » entourés de blancs : 100 caractères après trim, donc pas de coupe.
+  const ligne = ligneDe({ nom: 'a/b', description: `   ${'y'.repeat(100)}   ` });
+  assert.ok(ligne.endsWith(`| ${'y'.repeat(100)} |`));
+});
+
+test('genererRapport : 101 emoji → 99 emoji puis …', () => {
+  const ligne = ligneDe({ nom: 'a/b', description: '😀'.repeat(101) });
+  assert.ok(ligne.endsWith(`| ${'😀'.repeat(99)}… |`));
+});
+
+test('genererRapport : coupe en points de code, puis échappement des |', () => {
+  const ligne = ligneDe({ nom: 'a/b', description: `${'|'.repeat(98)}😀😀😀` });
+  assert.ok(ligne.endsWith(`| ${'\\|'.repeat(98)}😀… |`));
+});
+
 test('genererRapport : html_url vide → lien par défaut', () => {
   assert.ok(ligneDe({ nom: 'a/b', html_url: '' }).startsWith('| [a/b](https://github.com/a/b) |'));
 });
