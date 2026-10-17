@@ -66,8 +66,9 @@ Dépôts suivis : 3 · Nouveaux : 1 · Inactifs ou archivés : 1
 - Une ligne vide entre le titre, le résumé et chaque section ; une ligne vide entre le titre
   `##` et son tableau.
 - Lien : `html_url`, ou `https://github.com/<nom>` s'il est absent.
-- Description : `|` devient `\|`, chaque retour à la ligne devient une espace ; vide,
-  `null` ou absente → `—` (U+2014) ; plus de 100 caractères → les 99 premiers suivis de `…`.
+- Description, dans cet ordre : vide, `null` ou absente → `—` (U+2014) ; sinon chaque
+  retour à la ligne devient une espace ; puis, si le texte fait plus de 100 caractères,
+  les 99 premiers suivis de `…` (compté avant échappement) ; enfin `|` devient `\|`.
 - Aucun dépôt → titre, ligne de résumé à 0, puis la ligne `_Aucun dépôt suivi._`, séparés
   par une ligne vide comme ailleurs :
   `'# Radar IA — 2026-10-16\n\nDépôts suivis : 0 · Nouveaux : 0 · Inactifs ou archivés : 0\n\n_Aucun dépôt suivi._\n'`.

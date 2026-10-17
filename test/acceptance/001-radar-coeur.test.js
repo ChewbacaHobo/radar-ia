@@ -116,6 +116,12 @@ test('genererRapport : description de plus de 100 caractères coupée à 99 + �
   assert.ok(md.split('\n').includes(ligne), 'ligne arch/ive introuvable ou description mal coupée');
 });
 
+test('genererRapport : coupe sur le texte brut, puis échappement des |', () => {
+  const depots = [{ nom: 'o/r', categorie: 'C', stargazers_count: 1, pushed_at: ilYa(1), archived: false, description: `${'a'.repeat(98)}|bcd` }];
+  const md = genererRapport({ date: '2026-10-16', depots, maintenant: MAINTENANT });
+  assert.ok(md.includes(`| ${'a'.repeat(98)}\\|… |`), 'la coupe doit se faire avant l\'échappement');
+});
+
 test('genererRapport : précédent absent = tous nouveaux', () => {
   const md = genererRapport({ date: '2026-10-16', depots: DEPOTS.slice(0, 1), maintenant: MAINTENANT });
   assert.ok(md.includes('Dépôts suivis : 1 · Nouveaux : 1 · Inactifs ou archivés : 0'));
