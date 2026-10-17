@@ -1,0 +1,24 @@
+{
+  "depots": [
+    { "nom": "anthropics/claude-code", "categorie": "Officiel Anthropic" },
+    { "nom": "anthropics/claude-code-action", "categorie": "Officiel Anthropic" },
+    { "nom": "anthropics/skills", "categorie": "Officiel Anthropic" },
+    { "nom": "gastownhall/gastown", "categorie": "Orchestrateurs" },
+    { "nom": "BloopAI/vibe-kanban", "categorie": "Orchestrateurs" },
+    { "nom": "kbwo/ccmanager", "categorie": "Orchestrateurs" },
+    { "nom": "smtg-ai/claude-squad", "categorie": "Orchestrateurs" },
+    { "nom": "ruvnet/ruflo", "categorie": "Orchestrateurs" },
+    { "nom": "github/spec-kit", "categorie": "Méthode et specs" },
+    { "nom": "Fission-AI/OpenSpec", "categorie": "Méthode et specs" },
+    { "nom": "obra/superpowers", "categorie": "Méthode et specs" },
+    { "nom": "bmad-code-org/BMAD-METHOD", "categorie": "Méthode et specs" },
+    { "nom": "gastownhall/beads", "categorie": "Mémoire et tâches" },
+    { "nom": "ccusage/ccusage", "categorie": "Coûts" },
+    { "nom": "getagentseal/codeburn", "categorie": "Coûts" },
+    { "nom": "coleam00/ai-software-factory", "categorie": "Usines de référence" },
+    { "nom": "mattpocock/sandcastle", "categorie": "Usines de référence" },
+    { "nom": "addyosmani/factory", "categorie": "Usines de référence" },
+    { "nom": "cjpais/Handy", "categorie": "Voix" },
+    { "nom": "anomalyco/hex", "categorie": "Voix" }
+  ]
+}
