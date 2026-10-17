@@ -4,8 +4,11 @@
 // - Edit / Write / NotebookEdit : bloqué si le fichier visé est dans une zone protégée.
 // - Bash / PowerShell : bloqué si la commande nomme une zone protégée avec une opération d'écriture.
 // Bloqué = code 2 ; le message (stderr) est renvoyé au codeur.
+// Marche aussi dans un worktree : la racine est le dossier git qui contient le fichier visé,
+// pas CLAUDE_PROJECT_DIR (qui reste la copie principale).
 
-import { isAbsolute, relative, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 
 const ZONES = ['specs', 'test/acceptance'];
 const ZONE_IN_COMMAND = /(^|[\s"'=/.])(specs|test\/acceptance)(\/|\s|$|["'])/;
@@ -24,7 +27,18 @@ try {
 
 const tool = data.tool_name ?? '';
 const toolInput = data.tool_input ?? {};
-const root = process.env.CLAUDE_PROJECT_DIR || data.cwd || process.cwd();
+const cwd = data.cwd || process.env.CLAUDE_PROJECT_DIR || process.cwd();
+
+// Remonte jusqu'au dossier qui contient .git (un dossier pour la copie principale, un fichier pour un worktree).
+function racineGit(depart) {
+  let dossier = resolve(depart);
+  for (;;) {
+    if (existsSync(join(dossier, '.git'))) return dossier;
+    const parent = dirname(dossier);
+    if (parent === dossier) return process.env.CLAUDE_PROJECT_DIR || cwd;
+    dossier = parent;
+  }
+}
 
 function block(reason) {
   console.error(
@@ -36,8 +50,8 @@ function block(reason) {
 }
 
 function inZone(path) {
-  const absolute = isAbsolute(path) ? path : resolve(data.cwd || root, path);
-  const rel = relative(root, absolute).replaceAll('\\', '/');
+  const absolute = isAbsolute(path) ? path : resolve(cwd, path);
+  const rel = relative(racineGit(dirname(absolute)), absolute).replaceAll('\\', '/');
   return ZONES.some((zone) => rel === zone || rel.startsWith(`${zone}/`));
 }
 

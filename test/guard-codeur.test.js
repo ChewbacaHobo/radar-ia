@@ -2,6 +2,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -37,6 +39,20 @@ test('bloque git checkout et rm sur specs/', () => {
 
 test('bloque Set-Content PowerShell avec un chemin Windows', () => {
   assert.equal(run('PowerShell', { command: 'Set-Content .\\specs\\001-radar.md "x"' }), 2);
+});
+
+test('bloque aussi specs/ dans un worktree (racine = dossier git du fichier)', () => {
+  const worktree = mkdtempSync(join(tmpdir(), 'radar-worktree-'));
+  try {
+    writeFileSync(join(worktree, '.git'), 'gitdir: ailleurs\n'); // un worktree a un fichier .git
+    const input = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: join(worktree, 'specs', '002.md') }, cwd: worktree });
+    const status = spawnSync(process.execPath, [HOOK], { input, encoding: 'utf8', env: { ...process.env, CLAUDE_PROJECT_DIR: ROOT } }).status;
+    assert.equal(status, 2);
+    const permis = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: join(worktree, 'src', 'x.js') }, cwd: worktree });
+    assert.equal(spawnSync(process.execPath, [HOOK], { input: permis, encoding: 'utf8', env: { ...process.env, CLAUDE_PROJECT_DIR: ROOT } }).status, 0);
+  } finally {
+    rmSync(worktree, { recursive: true, force: true });
+  }
 });
 
 test('autorise la lecture et les tests', () => {
