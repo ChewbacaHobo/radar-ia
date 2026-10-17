@@ -21,7 +21,8 @@ try {
 if (data.stop_hook_active) process.exit(0);
 
 const command = process.env.STOP_TESTS_COMMAND || 'npm test';
-const cwd = process.env.CLAUDE_PROJECT_DIR || data.cwd || process.cwd();
+// data.cwd d'abord : dans un worktree, c'est lui qu'il faut tester, pas la copie principale.
+const cwd = data.cwd || process.env.CLAUDE_PROJECT_DIR || process.cwd();
 
 try {
   execSync(command, { cwd, stdio: 'pipe', encoding: 'utf8', timeout: 120_000 });

@@ -25,6 +25,19 @@ Lire `.claude/HANDOFF.md` : c'est l'état du travail et la source de vérité.
 4. À CORRIGER : renvoyer le rapport au codeur, puis revérifier. OK : poster le verdict
    sur la PR (`gh pr comment`), et l'humain fusionne.
 
+## Plusieurs specs en parallèle
+
+1. Orchestrateur : une branche et un juge par spec (étape 1 du cycle, répétée). Les specs
+   parallèles doivent toucher des fichiers différents ; sinon, les faire l'une après l'autre.
+2. La copie principale reste sur `main` : une branche ne peut être extraite que dans un
+   seul worktree à la fois.
+3. Lancer un codeur par spec, dans le même message : chacun tourne dans son propre
+   worktree (`isolation: worktree` dans `codeur.md`).
+4. Un vérificateur par PR, eux aussi en parallèle.
+5. Fusion une PR à la fois. Après chaque fusion, les autres PR sont « en retard » (la
+   protection exige une branche à jour) : bouton « Update branch » sur GitHub, ou le
+   codeur fait `git merge origin/main`. La CI rejuge.
+
 ## Règles
 - Jamais de commit sur `main`. Une branche par spec.
 - Node 22+, modules ES, aucune dépendance npm sans spec qui le dit.
@@ -36,7 +49,8 @@ Lire `.claude/HANDOFF.md` : c'est l'état du travail et la source de vérité.
 - `guard-codeur.mjs` (codeur) : aucune écriture dans `specs/` ni `test/acceptance/`.
 - `stop-tests.mjs` (codeur) : il ne peut pas terminer tant que `npm test` échoue.
 - `guard-verificateur.mjs` (vérificateur) : seules des commandes de lecture et de test.
-- Chaque hook a ses tests dans `test/`. GitHub refuse aussi tout push direct sur `main`.
+- Chaque hook a ses tests dans `test/`, qui tournent sous Linux et Windows dans la CI.
+  GitHub refuse aussi tout push direct sur `main`.
 
 ## Commandes
 - Tests : `npm test`

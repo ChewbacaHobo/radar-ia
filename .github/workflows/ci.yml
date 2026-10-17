@@ -1,4 +1,5 @@
-# Le juge automatique : une pull request ne peut être fusionnée que si ce job "test" est vert.
+# Le juge automatique : une pull request ne peut être fusionnée que si le job "test" est vert.
+# "test" résume les tests lancés sous Linux et sous Windows (Windows = la machine de développement).
 name: CI
 
 on:
@@ -10,12 +11,25 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: test
-    runs-on: ubuntu-latest
+  tests:
+    name: tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 24
       - run: npm test
+
+  # Le check exigé par la protection de main. if: always() pour qu'un échec donne "failure", jamais "skipped".
+  test:
+    name: test
+    needs: tests
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: test "${{ needs.tests.result }}" = "success"
