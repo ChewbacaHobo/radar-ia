@@ -40,13 +40,18 @@ export function instantane(depots) {
   return resultat;
 }
 
-// Description sur une ligne, coupée puis échappée pour une cellule de tableau.
+// Description sur une ligne, sans blancs aux bords, coupée puis échappée pour une cellule.
+// Les longueurs se comptent en points de code : un emoji vaut 1 et n'est jamais coupé.
 function formaterDescription(description) {
   if (description === null || description === undefined) return TIRET_CADRATIN;
-  let texte = String(description).replace(/\r\n|\r|\n/g, ' ');
+  const texte = String(description).replace(/\r\n|\r|\n/g, ' ').trim();
   if (texte === '') return TIRET_CADRATIN;
-  if (texte.length > LONGUEUR_MAX_DESCRIPTION) texte = `${texte.slice(0, 99)}…`;
-  return texte.replace(/\|/g, '\\|');
+  const caracteres = Array.from(texte);
+  const coupe =
+    caracteres.length > LONGUEUR_MAX_DESCRIPTION
+      ? `${caracteres.slice(0, LONGUEUR_MAX_DESCRIPTION - 1).join('')}…`
+      : texte;
+  return coupe.replace(/\|/g, '\\|');
 }
 
 function etoilesPrecedentes(precedent, nom) {
